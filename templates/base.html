@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Flask App{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css" rel="stylesheet"> <!-- เพิ่ม Bootstrap Icons -->
+    <style>
+        /* Custom styles for the sidebar */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            padding-top: 20px;
+            transition: width 0.3s;
+        }
+
+        .sidebar a {
+            padding: 15px 10px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .sidebar img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+        }
+
+        .sidebar i {
+            margin-right: 10px;
+        }
+
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+
+        .user-info {
+            color: white;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        /* ปุ่ม toggle เมนู */
+        #menu-toggle {
+            position: absolute;
+            top: 15px;
+            left: 270px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #343a40;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .sidebar a {
+            padding: 15px 0;
+        }
+
+        /* ซ่อนข้อความในเมนูเมื่อ Sidebar ถูกย่อ */
+        .sidebar.collapsed .menu-text {
+            display: none;
+        }
+
+        .sidebar.collapsed img {
+            width: 50%;
+        }
+
+        .sidebar.collapsed .user-info {
+            font-size: 0;
+        }
+
+        .content.collapsed {
+            margin-left: 90px;
+        }
+
+        #menu-toggle.collapsed {
+            left: 90px;
+        }
+
+        /* แสดงไอคอนเฉพาะเมื่อย่อเมนู */
+        .sidebar.collapsed .sidebar i {
+            font-size: 24px;
+            margin-right: 0;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <!-- Logo at the top -->
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        
+        <!-- User info -->
+        <div class="user-info">
+            ผู้ใช้: {{ session['username'] }}
+        </div>
+
+        <!-- Menu items with icons -->
+        <a href="/"><i class="bi bi-house-door"></i> <span class="menu-text">Home</span></a>
+        <a href="/checkin"><i class="bi bi-box-arrow-in"></i> <span class="menu-text">Product Check-In</span></a>
+        <a href="/export"><i class="bi bi-box-arrow-out"></i> <span class="menu-text">Product Export</span></a>
+        <a href="/add_product"><i class="bi bi-plus-circle"></i> <span class="menu-text">Add Product</span></a>
+        <a href="/logout"><i class="bi bi-box-arrow-right"></i> <span class="menu-text">Logout</span></a>
+    </div>
+
+    <!-- Toggle Menu Button -->
+    <i class="bi bi-list" id="menu-toggle"></i>
+
+    <!-- Main content area -->
+    <div class="content" id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.js"></script> <!-- เพิ่ม Bootstrap Icons -->
+    <script>
+        // Toggle sidebar visibility
+        document.getElementById("menu-toggle").onclick = function() {
+            var sidebar = document.getElementById("sidebar");
+            var content = document.getElementById("content");
+            var toggle = document.getElementById("menu-toggle");
+
+            sidebar.classList.toggle("collapsed");
+            content.classList.toggle("collapsed");
+            toggle.classList.toggle("collapsed");
+        };
+    </script>
+</body>
+</html>

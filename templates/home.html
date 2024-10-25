@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Dashboard</h1>
+
+        <!-- กราฟแท่งข้อมูลการรับเข้าและส่งออก -->
+        <div class="my-4">
+            <canvas id="monthlyChart" style="height: 300px;"></canvas>
+        </div>
+
+        <!-- Dashboard Summary -->
+        <div class="row text-center my-4">
+            <div class="col-md-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Check-In</h5>
+                        <p class="card-text display-6">{{ checkin_total }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Export</h5>
+                        <p class="card-text display-6">{{ export_total }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Current Stock</h5>
+                        <p class="card-text display-6">{{ stock_total }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables for recent Check-In and Export data -->
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Recent Product Check-In</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Customer Name</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Check-In Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in checkin_data %}
+                        <tr>
+                            <td>{{ item['product_id'] }}</td>
+                            <td>{{ item['customer_name'] }}</td>
+                            <td>{{ item['product_name'] }}</td>
+                            <td>{{ item['quantity'] }}</td>
+                            <td>{{ item['checkin_date'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-6">
+                <h3>Recent Product Export</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Customer Name</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Export Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in export_data %}
+                        <tr>
+                            <td>{{ item['product_id'] }}</td>
+                            <td>{{ item['customer_name'] }}</td>
+                            <td>{{ item['product_name'] }}</td>
+                            <td>{{ item['quantity'] }}</td>
+                            <td>{{ item['checkin_date'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Prepare data for Chart.js
+        const months = {{ monthly_checkin | map(attribute='month') | list | tojson }};
+        const checkinData = {{ monthly_checkin | map(attribute='total') | list | tojson }};
+        const exportData = {{ monthly_export | map(attribute='total') | list | tojson }};
+
+        // Create the bar chart
+        const ctx = document.getElementById('monthlyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Check-In',
+                        data: checkinData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Export',
+                        data: exportData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // ปิดการรักษาสัดส่วนเพื่อควบคุมความสูงเอง
+                scales: {
+                    x: { title: { display: true, text: 'Month' } },
+                    y: { title: { display: true, text: 'Quantity' }, beginAtZero: true }
+                }
+            }
+        });
+    </script>
+{% endblock %}

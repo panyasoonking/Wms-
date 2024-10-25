@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <style>
+        .table-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .table-container .table-section {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Product Export</h2>
+        
+        <div class="table-container">
+            <!-- ตารางสินค้าที่ค้นพบ (อยู่ทางซ้าย) -->
+            <div class="table-section">
+                <h3>Available Products</h3>
+                <!-- Form ค้นหาข้อมูลสินค้าที่ค้นพบ -->
+                <form method="GET" action="/export" class="mb-3">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="search" placeholder="Search by Product ID or Name" value="{{ request.args.get('search', '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- ตารางสินค้าที่ค้นพบ -->
+                <form method="POST" action="/export">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Product ID</th>
+                                <th>Customer Name</th>
+                                <th>Product Name</th>
+                                <th>Outer Size</th>
+                                <th>Quantity Available</th>
+                                <th>Quantity to Export</th>
+                                <th>Select</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product['product_id'] }}</td>
+                                <td>{{ product['customer_name'] }}</td>
+                                <td>{{ product['product_name'] }}</td>
+                                <td>{{ product['outer_size'] }}</td>
+                                <td>{{ product['quantity'] }}</td>
+                                <td>
+                                    <input type="number" class="form-control" name="export_quantity_{{ product['product_id'] }}" min="1" max="{{ product['quantity'] }}" value="1">
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="selected_products" value="{{ product['product_id'] }}">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <!-- ปุ่ม Export -->
+                    <button type="submit" class="btn btn-success">Export</button>
+                </form>
+            </div>
+
+            <!-- ตารางสินค้าที่ถูก Export แล้ว (อยู่ทางขวา) -->
+            <div class="table-section">
+                <h3>Exported Products</h3>
+                <!-- Form ค้นหาข้อมูล Export -->
+                <form method="GET" action="/export" class="mb-3">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="export_search" placeholder="Search Export by Product ID or Name" value="{{ request.args.get('export_search', '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- ตารางแสดงข้อมูลที่ถูก Export แล้ว -->
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Customer Name</th>
+                            <th>Product Name</th>
+                            <th>Outer Size</th>
+                            <th>Quantity Exported</th>
+                            <th>Export Date</th>
+                            <th>Storage Area</th>
+                            <th>Shelf Space</th>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th>Print</th> <!-- เพิ่มปุ่ม Print -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in exported_products %}
+                        <tr>
+                            <td>{{ product['product_id'] }}</td>
+                            <td>{{ product['customer_name'] }}</td>
+                            <td>{{ product['product_name'] }}</td>
+                            <td>{{ product['outer_size'] }}</td>
+                            <td>{{ product['quantity'] }}</td>
+                            <td>{{ product['checkin_date'] }}</td>
+                            <td>{{ product['storage_area'] }}</td>
+                            <td>{{ product['shelf_space'] }}</td>
+                            <td>{{ product['user_name'] }}</td>
+                            <td>{{ product['product_status'] }}</td>
+                            <td>
+                                <a href="{{ url_for('print_export', product_id=product['product_id']) }}" target="_blank" class="btn btn-secondary">Print</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+

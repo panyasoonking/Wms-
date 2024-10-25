@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Check-In{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Product Check-In</h2>
+        <form method="POST" action="/checkin">
+            <div class="mb-3">
+                <label for="product_id" class="form-label">Product ID</label>
+                <input type="text" class="form-control" id="product_id" name="product_id" required>
+            </div>
+            <div class="mb-3">
+                <label for="customer_name" class="form-label">Customer Name</label>
+                <select class="form-control" id="customer_name" name="customer_name" required>
+                    <option value="">Select Customer</option>
+                    {% for customer in customers %}
+                        <option value="{{ customer['customer_name'] }}">{{ customer['customer_name'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="product_name" class="form-label">Product Name</label>
+                <select class="form-control" id="product_name" name="product_name" required>
+                    <option value="">Select Product</option>
+                    {% for product in products %}
+                        <option value="{{ product['product_name'] }}">{{ product['product_name'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="outer_size" class="form-label">Outer Size (mm.)</label>
+                <select class="form-control" id="outer_size" name="outer_size" required>
+                    <option value="">Select Outer Size</option>
+                    {% for size in outer_sizes %}
+                        <option value="{{ size['outer_size'] }}">{{ size['outer_size'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" required>
+            </div>
+            <!--<div class="mb-3">
+                <label for="checkin_date" class="form-label">Check-In Date</label>
+                <input type="text" class="form-control" id="checkin_date" name="checkin_date" value="{{ checkin_date }}" readonly>
+            </div>-->
+            <div class="mb-3">
+                <label for="storage_area" class="form-label">Storage Area</label>
+                <select class="form-control" id="storage_area" name="storage_area" required>
+                    <option value="">Select Storage Area</option>
+                    {% for area in storage_areas %}
+                        <option value="{{ area['storage_area'] }}">{{ area['storage_area'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="shelf_space" class="form-label">Shelf Space</label>
+                <select class="form-control" id="shelf_space" name="shelf_space" required>
+                    <option value="">Select Shelf Space</option>
+                    {% for shelf in shelf_spaces %}
+                        <option value="{{ shelf['shelf_space'] }}">{{ shelf['shelf_space'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="detailed_notes" class="form-label">Detailed Notes</label>
+                <textarea class="form-control" id="detailed_notes" name="detailed_notes"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Check-In Product</button>
+        </form>
+        {% endblock %}
